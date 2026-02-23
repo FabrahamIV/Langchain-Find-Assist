@@ -1,0 +1,26 @@
+[
+  {
+    "policy_name": "Car  Gold",
+    "coverage": [],
+    "exclusions": [],
+    "claim_procedure": []
+  },
+  {
+    "policy_name": "Car  Standard",
+    "coverage": [],
+    "exclusions": [],
+    "claim_procedure": []
+  },
+  {
+    "policy_name": "Health  Basic",
+    "coverage": [],
+    "exclusions": [],
+    "claim_procedure": []
+  },
+  {
+    "policy_name": "Health  Premium",
+    "coverage": [],
+    "exclusions": [],
+    "claim_procedure": []
+  }
+]

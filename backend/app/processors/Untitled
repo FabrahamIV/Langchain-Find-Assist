@@ -1,0 +1,22 @@
+{
+  "car_insurance_standard": {
+    "policy_name": "Car Insurance Standard",
+    "document_type": "insurance",
+    "category": "car"
+  },
+  "car_insurance_gold": {
+    "policy_name": "Car Insurance Gold",
+    "document_type": "policy",
+    "category": "car"
+  },
+  "health_policy_basic": {
+    "policy_name": "Health Basic Plan",
+    "document_type": "policy",
+    "category": "health"
+  },
+  "health_policy_premium": {
+    "policy_name": "Health Premium Plan",
+    "document_type": "policy",
+    "category": "health"
+  }
+}
