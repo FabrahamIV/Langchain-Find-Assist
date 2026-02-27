@@ -1,6 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
+import Sidebar from './components/Sidebar.jsx'
+import ChatHeader from './components/ChatHeader.jsx'
+import MessageList from './components/MessageList.jsx'
+import ChatInput from './components/ChatInput.jsx'
 
+// Small helper to keep the "shape" of a conversation in one place.
+// App owns the data, but other components just receive what they need as props.
 function createEmptyConversation(id) {
   return {
     id,
@@ -10,26 +16,40 @@ function createEmptyConversation(id) {
   }
 }
 
+// App is now a "page‑level" component: it owns state and behavior,
+// and delegates rendering details to smaller, focused components.
 function App() {
+  // List of all chats in the left sidebar
   const [conversations, setConversations] = useState(() => {
     const firstId = crypto.randomUUID()
     return [createEmptyConversation(firstId)]
   })
+
+  // Which conversation is currently selected
   const [activeId, setActiveId] = useState(() => conversations[0]?.id ?? null)
+
+  // Text input + attached file for the message being composed
   const [input, setInput] = useState('')
   const [attachedFile, setAttachedFile] = useState(null)
+
+  // Voice input state + browser SpeechRecognition instance
   const [isRecording, setIsRecording] = useState(false)
   const recognitionRef = useRef(null)
+
+  // Used to auto‑scroll the messages list when a new message arrives
   const messagesEndRef = useRef(null)
 
+  // Compute the active conversation from the list + active id
   const activeConversation = useMemo(
     () => conversations.find((c) => c.id === activeId) ?? conversations[0],
     [activeId, conversations],
   )
 
+  // Feature‑detection for browser voice support so we can disable the mic button
   const supportsVoice = typeof window !== 'undefined' &&
     ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)
 
+  // One‑time setup of the SpeechRecognition instance (if the browser supports it).
   useEffect(() => {
     if (!supportsVoice || recognitionRef.current) return
 
@@ -38,7 +58,7 @@ function App() {
     if (!SpeechRecognition) return
 
     const recognition = new SpeechRecognition()
-    recognition.lang = 'en-US'
+    recognition.lang = 'id-ID'
     recognition.continuous = false
     recognition.interimResults = true
 
@@ -57,11 +77,13 @@ function App() {
     recognitionRef.current = recognition
   }, [supportsVoice])
 
+  // When messages change, scroll the messages container to the bottom.
   useEffect(() => {
     if (!messagesEndRef.current) return
     messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
   }, [activeConversation?.messages.length])
 
+  // Create a brand‑new empty chat and make it active.
   const handleNewChat = () => {
     const id = crypto.randomUUID()
     const next = createEmptyConversation(id)
@@ -71,12 +93,16 @@ function App() {
     setAttachedFile(null)
   }
 
+  // Helper to update a single conversation by id in an immutable way.
   const updateConversation = (id, updater) => {
     setConversations((prev) =>
       prev.map((c) => (c.id === id ? updater(c) : c)),
     )
   }
 
+  // Handle the form submit from ChatInput.
+  // For now this just generates a mock AI reply;
+  // you can later replace this with a real API call.
   const handleSubmit = (event) => {
     event.preventDefault()
     const trimmed = input.trim()
@@ -114,6 +140,8 @@ function App() {
     setAttachedFile(null)
   }
 
+  // Keep App in charge of the file object, and let ChatInput tell us
+  // when the user picked or cleared a file.
   const handleFileChange = (event) => {
     const file = event.target.files?.[0]
     if (!file) {
@@ -123,6 +151,7 @@ function App() {
     setAttachedFile(file)
   }
 
+  // Start/stop the SpeechRecognition instance when the mic button is clicked.
   const toggleRecording = () => {
     if (!supportsVoice || !recognitionRef.current) return
     const recognition = recognitionRef.current
@@ -139,152 +168,36 @@ function App() {
 
   return (
     <div className="app">
-      <aside className="sidebar">
-        <div className="sidebar-header">
-          <button className="new-chat-button" type="button" onClick={handleNewChat}>
-            <span className="new-chat-icon">＋</span>
-            <span>New chat</span>
-          </button>
-        </div>
-        <div className="sidebar-section-label">History</div>
-        <nav className="sidebar-list">
-          {conversations.map((conversation) => (
-            <button
-              key={conversation.id}
-              type="button"
-              className={
-                conversation.id === activeConversation?.id
-                  ? 'sidebar-item sidebar-item-active'
-                  : 'sidebar-item'
-              }
-              onClick={() => {
-                setActiveId(conversation.id)
-                setInput('')
-                setAttachedFile(null)
-              }}
-            >
-              <span className="sidebar-item-title">
-                {conversation.title || 'New chat'}
-              </span>
-            </button>
-          ))}
-        </nav>
-      </aside>
+      <Sidebar
+        conversations={conversations}
+        activeConversationId={activeConversation?.id ?? null}
+        onNewChat={handleNewChat}
+        onSelectConversation={(id) => {
+          setActiveId(id)
+          setInput('')
+          setAttachedFile(null)
+        }}
+      />
 
       <main className="chat-main">
-        <header className="chat-header">
-          <div className="chat-header-title">
-            <span className="chat-brand-dot" />
-            <span className="chat-brand-name">Find Assist</span>
-          </div>
-          <div className="chat-header-subtitle">
-            Ask anything about your project. Voice, files, and history are all in one place.
-          </div>
-        </header>
+        <ChatHeader />
 
-        <section className="chat-messages">
-          {activeConversation?.messages.length ? (
-            activeConversation.messages.map((message) => (
-              <div
-                key={message.id}
-                className={
-                  message.role === 'user'
-                    ? 'message message-user'
-                    : 'message message-assistant'
-                }
-              >
-                <div className="message-avatar">
-                  {message.role === 'user' ? 'You' : 'AI'}
-                </div>
-                <div className="message-body">
-                  <div className="message-text">{message.content}</div>
-                  {message.fileName ? (
-                    <div className="message-file-pill">
-                      <span className="message-file-icon">📎</span>
-                      <span className="message-file-name">{message.fileName}</span>
-                    </div>
-                  ) : null}
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="chat-empty-state">
-              <div className="chat-empty-pill">Inspired by gemini.google.com</div>
-              <h1 className="chat-empty-title">
-                Hello there,
-                <br />
-                what can I help you find?
-              </h1>
-              <p className="chat-empty-subtitle">
-                Start with a question, attach a file, or hold the mic to speak.
-              </p>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </section>
+        <MessageList
+          messages={activeConversation?.messages ?? []}
+          messagesEndRef={messagesEndRef}
+        />
 
-        <form className="chat-input-container" onSubmit={handleSubmit}>
-          {attachedFile ? (
-            <div className="attached-file-pill">
-              <span className="attached-file-icon">📎</span>
-              <span className="attached-file-name">{attachedFile.name}</span>
-              <button
-                type="button"
-                className="attached-file-remove"
-                onClick={() => setAttachedFile(null)}
-              >
-                ✕
-              </button>
-            </div>
-          ) : null}
-
-          <div className="chat-input-row">
-            <label className="icon-button" htmlFor="file-upload">
-              <span className="icon">📎</span>
-              <input
-                id="file-upload"
-                type="file"
-                className="file-input-hidden"
-                onChange={handleFileChange}
-              />
-            </label>
-
-            <div className="chat-input-wrapper">
-              <input
-                className="chat-input"
-                placeholder="Ask a question about your code, data, or files..."
-                value={input}
-                onChange={(event) => setInput(event.target.value)}
-              />
-            </div>
-
-            <button
-              type="button"
-              className={`icon-button ${isRecording ? 'icon-button-active' : ''}`}
-              onClick={toggleRecording}
-              disabled={!supportsVoice}
-              title={
-                supportsVoice
-                  ? isRecording
-                    ? 'Stop voice input'
-                    : 'Start voice input'
-                  : 'Voice input is not available in this browser'
-              }
-            >
-              <span className="icon">
-                {isRecording ? '■' : '🎤'}
-              </span>
-            </button>
-
-            <button
-              type="submit"
-              className="send-button"
-              disabled={!input.trim() && !attachedFile}
-            >
-              Send
-            </button>
-          </div>
-        </form>
+        <ChatInput
+          input={input}
+          onInputChange={setInput}
+          onSubmit={handleSubmit}
+          attachedFile={attachedFile}
+          onFileChange={handleFileChange}
+          onRemoveFile={() => setAttachedFile(null)}
+          supportsVoice={supportsVoice}
+          isRecording={isRecording}
+          onToggleRecording={toggleRecording}
+        />
 
         <div className="chat-footer-hint">
           <span>Built with Vite + React. Connect this UI to your API when ready.</span>
