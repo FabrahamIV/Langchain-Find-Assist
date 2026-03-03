@@ -103,7 +103,7 @@ function App() {
   // Handle the form submit from ChatInput.
   // For now this just generates a mock AI reply;
   // you can later replace this with a real API call.
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
     const trimmed = input.trim()
     if (!trimmed && !attachedFile) return
@@ -117,25 +117,40 @@ function App() {
       createdAt: new Date().toISOString(),
     }
 
-    const mockReply = {
-      id: crypto.randomUUID(),
-      role: 'assistant',
-      content:
-        'This is a placeholder response. Wire this UI to your backend when ready.',
-      createdAt: new Date().toISOString(),
+    const formData = new FormData()
+
+    if (attachedFile) {
+      formData.append("file", attachedFile)
     }
 
-    updateConversation(activeConversation.id, (c) => {
-      const nextMessages = [...c.messages, userMessage, mockReply]
-      const firstUser = nextMessages.find((m) => m.role === 'user')
-      const title = firstUser?.content?.slice(0, 40) || 'New chat'
-      return {
-        ...c,
-        messages: nextMessages,
-        title,
+    try {
+    const response = await fetch("http://localhost:8000/chat", {
+        method: "POST",
+        body: formData,
+      })
+      
+      const mockReply = {
+        id: crypto.randomUUID(),
+        role: 'assistant',
+        content:
+        'This is a placeholder response. Wire this UI to your backend when ready.',
+        createdAt: new Date().toISOString(),
       }
-    })
-
+      
+      updateConversation(activeConversation.id, (c) => {
+        const nextMessages = [...c.messages, userMessage, mockReply]
+        const firstUser = nextMessages.find((m) => m.role === 'user')
+        const title = firstUser?.content?.slice(0, 40) || 'New chat'
+        return {
+          ...c,
+          messages: nextMessages,
+          title,
+        }
+      })
+    } catch (error) {
+      console.error("Upload error:", error)
+    }
+      
     setInput('')
     setAttachedFile(null)
   }
