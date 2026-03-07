@@ -5,7 +5,7 @@ import shutil
 
 app = FastAPI()
 
-UPLOAD_DIR = Path("data/uploads")
+UPLOAD_DIR = Path("data/policies")
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)  # auto create folder
 
 @app.post("/chat")
