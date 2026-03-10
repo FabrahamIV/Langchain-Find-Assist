@@ -5,7 +5,7 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from app.database.database import engine, Base
-from app.database.db_models import User, Conversation, Message
+from app.models.models_messages import User, Conversation, Message
 
 def test_db_init():
     print("Starting database initialization test...")

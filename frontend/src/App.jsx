@@ -110,7 +110,7 @@ function App() {
     if (!activeConversation) return
 
     const userMessage = {
-      id: crypto.randomUUID(),
+      chat_id: crypto.randomUUID(),
       role: 'user',
       content: trimmed || (attachedFile ? attachedFile.name : ''),
       fileName: attachedFile?.name ?? null,
@@ -119,9 +119,13 @@ function App() {
 
     const formData = new FormData()
 
+    formData.append("chat_id", userMessage.chat_id)
+    formData.append("role", userMessage.role)
+    formData.append("content", userMessage.content)
     if (attachedFile) {
       formData.append("file", attachedFile)
     }
+    formData.append("created_at", userMessage.createdAt)
 
     try {
     const response = await fetch("http://localhost:8000/chat", {

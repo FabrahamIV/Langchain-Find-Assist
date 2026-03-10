@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 
 from database.database import get_db
-from database.db_models import User, Message
+from models.models_messages import User, Message
 
 app = FastAPI()
 
