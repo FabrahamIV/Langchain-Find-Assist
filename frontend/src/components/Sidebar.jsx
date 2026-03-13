@@ -3,21 +3,29 @@
 // it just receives data + callbacks from App via props.
 
 function Sidebar({
+  isOpen,
+  onToggle,
   conversations,
   activeConversationId,
   onNewChat,
   onSelectConversation,
 }) {
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
       <div className="sidebar-header">
-        <button className="new-chat-button" type="button" onClick={onNewChat}>
-          <span className="new-chat-icon">＋</span>
-          <span>New chat</span>
+        <button className="sidebar-toggle" type="button" onClick={onToggle}>
+          ☰
         </button>
       </div>
 
-      <div className="sidebar-section-label">History</div>
+      <div className="sidebar-menu">
+        <button className="new-chat-button" type="button" onClick={onNewChat}>
+          <span className="new-chat-icon">＋</span>
+          <span>New Chat</span>
+        </button>
+      </div>
+
+      <div className="sidebar-section-label">Your Conversations</div>
 
       <nav className="sidebar-list">
         {conversations.map((conversation) => {
@@ -36,7 +44,7 @@ function Sidebar({
               onClick={() => onSelectConversation(conversation.id)}
             >
               <span className="sidebar-item-title">
-                {conversation.title || 'New chat'}
+                {conversation.title || 'New Chat'}
               </span>
             </button>
           )

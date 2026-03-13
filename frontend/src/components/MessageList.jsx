@@ -32,7 +32,6 @@ function MessageList({ messages, messagesEndRef }) {
         ))
       ) : (
         <div className="chat-empty-state">
-          <div className="chat-empty-pill">Inspired by gemini.google.com</div>
           <h1 className="chat-empty-title">
             Hello there,
             <br />

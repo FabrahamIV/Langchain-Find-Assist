@@ -6,10 +6,7 @@ function ChatHeader() {
     <header className="chat-header">
       <div className="chat-header-title">
         <span className="chat-brand-dot" />
-        <span className="chat-brand-name">Find Assist</span>
-      </div>
-      <div className="chat-header-subtitle">
-        Ask anything about your project. Voice, files, and history are all in one place.
+        <span className="chat-brand-name">Faisal Abraham Project</span>
       </div>
     </header>
   )

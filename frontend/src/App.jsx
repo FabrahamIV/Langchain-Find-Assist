@@ -10,7 +10,7 @@ import ChatInput from './components/ChatInput.jsx'
 function createEmptyConversation(id) {
   return {
     id,
-    title: 'New chat',
+    title: 'New Chat',
     messages: [],
     createdAt: new Date().toISOString(),
   }
@@ -34,6 +34,7 @@ function App() {
 
   // Voice input state + browser SpeechRecognition instance
   const [isRecording, setIsRecording] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const recognitionRef = useRef(null)
 
   // Used to auto‑scroll the messages list when a new message arrives
@@ -134,7 +135,7 @@ function App() {
       })
       
       const mockReply = {
-        id: crypto.randomUUID(),
+        chat_id: crypto.randomUUID(),
         role: 'assistant',
         content:
         'This is a placeholder response. Wire this UI to your backend when ready.',
@@ -144,7 +145,7 @@ function App() {
       updateConversation(activeConversation.id, (c) => {
         const nextMessages = [...c.messages, userMessage, mockReply]
         const firstUser = nextMessages.find((m) => m.role === 'user')
-        const title = firstUser?.content?.slice(0, 40) || 'New chat'
+        const title = firstUser?.content?.slice(0, 40) || 'New Chat'
         return {
           ...c,
           messages: nextMessages,
@@ -185,9 +186,15 @@ function App() {
     }
   }
 
+  const toggleSidebar = () => {
+    setIsSidebarOpen((prev) => !prev)
+  }
+
   return (
-    <div className="app">
+    <div className={`app ${!isSidebarOpen ? 'sidebar-open' : 'sidebar-collapsed'}`}>
       <Sidebar
+        isOpen={isSidebarOpen}
+        onToggle={toggleSidebar}
         conversations={conversations}
         activeConversationId={activeConversation?.id ?? null}
         onNewChat={handleNewChat}
@@ -219,7 +226,7 @@ function App() {
         />
 
         <div className="chat-footer-hint">
-          <span>Built with Vite + React. Connect this UI to your API when ready.</span>
+          <span>2026</span>
         </div>
       </main>
     </div>
