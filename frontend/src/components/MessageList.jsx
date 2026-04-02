@@ -1,13 +1,14 @@
 // MessageList: renders either the list of messages or the "empty state".
 // It does not know *how* messages are produced; it only knows how to display them.
 
-function MessageList({ messages, messagesEndRef }) {
-  const hasMessages = messages && messages.length > 0
+function MessageList({ messages, messagesEndRef, isLoading }) {
+  const hasMessages = (messages && messages.length > 0) || isLoading
 
   return (
-    <section className="chat-messages">
-      {hasMessages ? (
+    <section className={`chat-messages ${hasMessages ? 'has-messages' : 'empty'}`}>
+      {messages && messages.length > 0 ? (
         messages.map((message) => (
+          
           <div
             key={message.id}
             className={
@@ -30,7 +31,7 @@ function MessageList({ messages, messagesEndRef }) {
             </div>
           </div>
         ))
-      ) : (
+      ) : !isLoading ? (
         <div className="chat-empty-state">
           <h1 className="chat-empty-title">
             Hello there,
@@ -40,6 +41,20 @@ function MessageList({ messages, messagesEndRef }) {
           <p className="chat-empty-subtitle">
             Start with a question, attach a file, or hold the mic to speak.
           </p>
+        </div>
+      ) : null}
+
+      {/* Thinking indicator shown while waiting for the AI reply */}
+      {isLoading && (
+        <div className="message message-assistant">
+          <div className="message-avatar">AI</div>
+          <div className="message-body">
+            <div className="message-text message-thinking">
+              <span className="thinking-dot" />
+              <span className="thinking-dot" />
+              <span className="thinking-dot" />
+            </div>
+          </div>
         </div>
       )}
 

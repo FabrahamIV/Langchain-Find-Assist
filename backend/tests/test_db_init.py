@@ -4,7 +4,7 @@ import os
 # Add the project root (backend) to sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from app.database.database import engine, Base
+from app.database.database_chat import engine, Base
 from app.models.models_messages import User, Conversation, Message
 
 def test_db_init():

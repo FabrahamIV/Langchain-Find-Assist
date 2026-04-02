@@ -7,7 +7,7 @@ class ChatState(TypedDict, total=False):
     file_path: str
     list_chunks: list[str]
     all_docs: list
-    embeddings_model: HuggingFaceEmbeddings
-    vectorstore: PineconeVectorStore
+    embeddings_model: any
+    vectorstore: any
     retrieved_docs: Annotated[list[str], lambda x, y: (x + y)[-5:]]
     answer: str

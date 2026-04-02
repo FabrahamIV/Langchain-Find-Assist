@@ -36,7 +36,7 @@ function ChatInput({
             id="file-upload"
             type="file"
             className="file-input-hidden"
-            onChange={onFileChange}
+            onChange={onFileChange}      n
           />
         </label>
 

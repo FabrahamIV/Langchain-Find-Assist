@@ -18,7 +18,17 @@ def generate_reply(state: ChatState) -> dict:
 
     question = state.get("message", "no message found")
     print(f"--- Processing Query: {question} ---")
-    context = "\n\n".join(state.get("retrieved_docs", []))
+    
+    # Defensively extract string content
+    raw_docs = state.get("retrieved_docs", [])
+    docs_strings = []
+    for doc in raw_docs:
+        if hasattr(doc, "page_content"):
+            docs_strings.append(doc.page_content)
+        else:
+            docs_strings.append(str(doc))
+            
+    context = "\n\n".join(docs_strings)
     if not question:
         return {"answer": "no answer found"}
 
@@ -33,3 +43,43 @@ def generate_reply(state: ChatState) -> dict:
     response = chain.invoke({"question": question, "context": context})
 
     return {"answer": response.content}
+
+from langgraph.graph import StateGraph, END
+from typing import Literal
+
+
+# Import agents_nodes here to avoid circular imports since agents_nodes imports generate_reply
+from app.agents.agents_nodes import process_file_node, retrieve_node, reply_node, route_based_on_file
+
+
+def build_chat_graph():
+    """
+    Build LangGraph workflow for RAG chat.
+    """
+    builder = StateGraph(ChatState)
+
+    # Nodes
+    builder.add_node("process_file", process_file_node)
+    builder.add_node("retrieve", retrieve_node)
+    builder.add_node("generate", reply_node)
+
+    # Flow
+    builder.set_conditional_entry_point(
+        route_based_on_file,
+        {
+            "process_file_node": "process_file",
+            "retrieve_node": "retrieve",
+        }
+    )
+    builder.add_edge("process_file", "retrieve")
+    builder.add_edge("retrieve", "generate")
+    builder.add_edge("generate", END)
+
+    graph = builder.compile()
+
+    return graph
+
+
+# create graph instance
+app_graph = build_chat_graph()
+chat_graph = app_graph

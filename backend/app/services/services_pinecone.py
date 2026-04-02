@@ -22,6 +22,19 @@ def pinecone_vector_store(state: ChatState) -> dict:
 
 def retrieve_docs(state: ChatState) -> dict:
     vectorstore = state.get("vectorstore")
+    
+    # If starting a pure chat without uploading a file, vectorstore won't be in state yet.
+    if not vectorstore:
+        from app.services.services_rag import embeddings
+        embeddings_model = state.get("embeddings_model")
+        if not embeddings_model:
+            embeddings_model = embeddings(state)["embeddings_model"]
+        
+        vectorstore = PineconeVectorStore.from_existing_index(
+            index_name="insurance-assistant-index", 
+            embedding=embeddings_model
+        )
+
     query = state.get("message")
     
     _agent_debug_log(
@@ -31,5 +44,6 @@ def retrieve_docs(state: ChatState) -> dict:
         data={"query": query},
     )
     
-    retrieved_docs = vectorstore.similarity_search(query, k=1)
-    return {"retrieved_docs": retrieved_docs}
+    retrieved_docs = vectorstore.similarity_search(query, k=2)
+    docs_content = [doc.page_content for doc in retrieved_docs]
+    return {"retrieved_docs": docs_content}

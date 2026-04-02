@@ -1,0 +1,74 @@
+Traceback (most recent call last):
+  File "C:\AgenticAI\Project\Find-Assist\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\AgenticAI\Project\Find-Assist\backend\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.UndefinedColumn: column "content" of relation "messages" does not exist
+LINE 1: ...NTO messages (id, conversation_id, user_id, role, content, f...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\AgenticAI\Project\Find-Assist\backend\test_db_insert.py", line 32, in test_insert
+    db.commit()
+  File "C:\AgenticAI\Project\Find-Assist\backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2030, in commit
+    trans.commit(_to_root=True)
+  File "<string>", line 2, in commit
+  File "C:\AgenticAI\Project\Find-Assist\backend\.venv\Lib\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "C:\AgenticAI\Project\Find-Assist\backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1311, in commit
+    self._prepare_impl()
+  File "<string>", line 2, in _prepare_impl
+  File "C:\AgenticAI\Project\Find-Assist\backend\.venv\Lib\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "C:\AgenticAI\Project\Find-Assist\backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1286, in _prepare_impl
+    self.session.flush()
+  File "C:\AgenticAI\Project\Find-Assist\backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py", line 4331, in flush
+    self._flush(objects)
+  File "C:\AgenticAI\Project\Find-Assist\backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py", line 4466, in _flush
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+  File "C:\AgenticAI\Project\Find-Assist\backend\.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\AgenticAI\Project\Find-Assist\backend\.venv\Lib\site-packages\sqlalchemy\orm\session.py", line 4427, in _flush
+    flush_context.execute()
+  File "C:\AgenticAI\Project\Find-Assist\backend\.venv\Lib\site-packages\sqlalchemy\orm\unitofwork.py", line 466, in execute
+    rec.execute(self)
+  File "C:\AgenticAI\Project\Find-Assist\backend\.venv\Lib\site-packages\sqlalchemy\orm\unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+  File "C:\AgenticAI\Project\Find-Assist\backend\.venv\Lib\site-packages\sqlalchemy\orm\persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+  File "C:\AgenticAI\Project\Find-Assist\backend\.venv\Lib\site-packages\sqlalchemy\orm\persistence.py", line 1233, in _emit_insert_statements
+    result = connection.execute(
+             ^^^^^^^^^^^^^^^^^^^
+  File "C:\AgenticAI\Project\Find-Assist\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "C:\AgenticAI\Project\Find-Assist\backend\.venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\AgenticAI\Project\Find-Assist\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\AgenticAI\Project\Find-Assist\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\AgenticAI\Project\Find-Assist\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "C:\AgenticAI\Project\Find-Assist\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\AgenticAI\Project\Find-Assist\backend\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\AgenticAI\Project\Find-Assist\backend\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column "content" of relation "messages" does not exist
+LINE 1: ...NTO messages (id, conversation_id, user_id, role, content, f...
+                                                             ^
+
+[SQL: INSERT INTO messages (id, conversation_id, user_id, role, content, file, created_at) VALUES (%(id)s, %(conversation_id)s, %(user_id)s, %(role)s, %(content)s, %(file)s, %(created_at)s)]
+[parameters: {'id': '10668c04-34b0-4024-906d-4be085e78364', 'conversation_id': '700228a1-4043-4bf1-b237-84e684de7a3f', 'user_id': '09c23df7-49f0-45de-a852-2d14545bc84a', 'role': 'user', 'content': 'test', 'file': None, 'created_at': datetime.datetime(2026, 3, 22, 0, 13, 32, 48876)}]
+(Background on this error at: https://sqlalche.me/e/20/f405)

@@ -31,6 +31,7 @@ function App() {
   // Text input + attached file for the message being composed
   const [input, setInput] = useState('')
   const [attachedFile, setAttachedFile] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   // Voice input state + browser SpeechRecognition instance
   const [isRecording, setIsRecording] = useState(false)
@@ -111,7 +112,7 @@ function App() {
     if (!activeConversation) return
 
     const userMessage = {
-      chat_id: crypto.randomUUID(),
+      id: crypto.randomUUID(),
       role: 'user',
       content: trimmed || (attachedFile ? attachedFile.name : ''),
       fileName: attachedFile?.name ?? null,
@@ -120,40 +121,59 @@ function App() {
 
     const formData = new FormData()
 
-    formData.append("chat_id", userMessage.chat_id)
+    formData.append("id", userMessage.id)
     formData.append("role", userMessage.role)
-    formData.append("content", userMessage.content)
+    
+    // For the backend, ask for a summary if the user didn't type anything.
+    const backendPrompt = trimmed || (attachedFile ? "Please summarize the attached document." : '')
+    formData.append("message", backendPrompt)
+    
     if (attachedFile) {
       formData.append("file", attachedFile)
     }
     formData.append("created_at", userMessage.createdAt)
 
+    updateConversation(activeConversation.id, (c) => {
+      const nextMessage = [...c.messages, userMessage]
+      // const firstUser = nextMessage.find((m) => m.role === 'user')
+      // const title = c.title || firstUser?.content?.slice(0, 40) || 'New Chat'
+      const title = c.messages.length === 0
+        ? userMessage.content.slice(0, 40)
+        : c.title
+      return {
+        ...c,
+        messages: nextMessage,
+        title,
+      }
+    })
+
     try {
-    const response = await fetch("http://localhost:8000/chat", {
+      setIsLoading(true)
+      const response = await fetch("http://localhost:8000/api/chat", {
         method: "POST",
         body: formData,
       })
-      
-      const mockReply = {
-        chat_id: crypto.randomUUID(),
+
+      const data = await response.json()
+
+      const aiReply = {
+        id: crypto.randomUUID(),
         role: 'assistant',
-        content:
-        'This is a placeholder response. Wire this UI to your backend when ready.',
+        content: data.reply ?? 'Sorry, I could not generate a response.',
         createdAt: new Date().toISOString(),
       }
-      
+
       updateConversation(activeConversation.id, (c) => {
-        const nextMessages = [...c.messages, userMessage, mockReply]
-        const firstUser = nextMessages.find((m) => m.role === 'user')
-        const title = firstUser?.content?.slice(0, 40) || 'New Chat'
+        const nextMessage = [...c.messages, aiReply]
         return {
           ...c,
-          messages: nextMessages,
-          title,
+          messages: nextMessage,
         }
       })
     } catch (error) {
-      console.error("Upload error:", error)
+      console.error("Chat error:", error)
+    } finally {
+      setIsLoading(false)
     }
       
     setInput('')
@@ -211,6 +231,7 @@ function App() {
         <MessageList
           messages={activeConversation?.messages ?? []}
           messagesEndRef={messagesEndRef}
+          isLoading={isLoading}
         />
 
         <ChatInput

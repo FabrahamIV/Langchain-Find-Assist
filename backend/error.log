@@ -1,0 +1,29 @@
+Traceback (most recent call last):
+  File "C:\AgenticAI\Project\Find-Assist\backend\test_rag.py", line 16, in test
+    result = app_graph.invoke(state)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\AgenticAI\Project\Find-Assist\backend\.venv\Lib\site-packages\langgraph\pregel\main.py", line 3071, in invoke
+    for chunk in self.stream(
+                 ^^^^^^^^^^^^
+  File "C:\AgenticAI\Project\Find-Assist\backend\.venv\Lib\site-packages\langgraph\pregel\main.py", line 2646, in stream
+    for _ in runner.tick(
+             ^^^^^^^^^^^^
+  File "C:\AgenticAI\Project\Find-Assist\backend\.venv\Lib\site-packages\langgraph\pregel\_runner.py", line 167, in tick
+    run_with_retry(
+  File "C:\AgenticAI\Project\Find-Assist\backend\.venv\Lib\site-packages\langgraph\pregel\_retry.py", line 42, in run_with_retry
+    return task.proc.invoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\AgenticAI\Project\Find-Assist\backend\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 656, in invoke
+    input = context.run(step.invoke, input, config, **kwargs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\AgenticAI\Project\Find-Assist\backend\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 400, in invoke
+    ret = self.func(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\AgenticAI\Project\Find-Assist\backend\app\agents\agents_nodes.py", line 51, in reply_node
+    return generate_reply(state)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\AgenticAI\Project\Find-Assist\backend\app\agents\agents_chat_graph.py", line 21, in generate_reply
+    context = "\n\n".join(state.get("retrieved_docs", []))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: sequence item 0: expected str instance, Document found
+During task with name 'generate' and id 'f89dcb4b-62e5-3d38-94c3-51aa6ceea8cc'
