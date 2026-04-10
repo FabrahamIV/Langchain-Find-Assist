@@ -1,6 +1,5 @@
 from typing import TypedDict, Annotated
 
-
 class ChatState(TypedDict, total=False):
     message: str
     conversation_id: str

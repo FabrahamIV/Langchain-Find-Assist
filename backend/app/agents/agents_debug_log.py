@@ -9,6 +9,7 @@ def _agent_debug_log(
     message: str,
     data: dict | None = None,
     run_id: str = "pre-fix-1",
+    timestamp: float | None = None
 ) -> None:
     """
     Lightweight debug logger for this AI-assisted debug session.
@@ -22,13 +23,17 @@ def _agent_debug_log(
             "location": location,
             "message": message,
             "data": data or {},
-            "timestamp": int(time.time() * 1000),
+            "timestamp": int((timestamp or time.time()) * 1000),
         }
-        log_path = Path(__file__).resolve().parents[3] / "debug" / "debug-9f7496.log"
+        log_path = Path(__file__).resolve().parents[3] / "debug-logs" / "debug-9f7496.log"
         # Auto-create the debug folder if it doesn't exist yet
         log_path.parent.mkdir(parents=True, exist_ok=True)
         
         with log_path.open("a", encoding="utf-8") as f:
             f.write(json.dumps(log_obj) + "\n")
+        print(f"[Debug Log Success] Log written to {log_path}")
     except Exception as e:
         print(f"[Debug Logger Failed] {e}")
+
+if __name__ == "__main__":
+    _agent_debug_log("TEST-1", "self-test", "This is a direct execution test.")

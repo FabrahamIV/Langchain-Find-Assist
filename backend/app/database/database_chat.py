@@ -1,21 +1,33 @@
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
-from datetime import datetime
+from dotenv import load_dotenv
+from app.agents.agents_debug_log import _agent_debug_log
 
-engine = create_engine("postgresql://fabraham:541789@127.0.0.1:5432/db_chat")
+load_dotenv()
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+engine = create_engine(DATABASE_URL, pool_pre_ping=True)
 Base = declarative_base()
 
-Base.metadata.create_all(engine)
-Session = sessionmaker(
+SessionLocal = sessionmaker(
     bind=engine,
     autoflush=False,
     autocommit=False,
-    expire_on_commit=False
+    expire_on_commit=False,
 )
 
+
 def get_db():
-    session = Session()
+    """FastAPI dependency that provides a DB session per request."""
+    _agent_debug_log(
+            hypothesis_id="H1",
+            location="database_chat.get_db",
+            message="Database connection established",
+        )
+    db = SessionLocal()
     try:
-        yield session
+        yield db
     finally:
-        session.close()
+        db.close()

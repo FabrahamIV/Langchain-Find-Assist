@@ -1,13 +1,93 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="light">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>frontend</title>
+    <title>Sanctuary | Cognitive Intelligence Suite</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface": "#2a3439",
+                        "on-secondary-container": "#455367",
+                        "tertiary-container": "#d9d7f8",
+                        "inverse-surface": "#0b0f10",
+                        "on-error-container": "#752121",
+                        "secondary-fixed": "#d5e3fc",
+                        "inverse-on-surface": "#9a9d9f",
+                        "surface-variant": "#d9e4ea",
+                        "inverse-primary": "#5f9efb",
+                        "on-primary-container": "#00519e",
+                        "on-surface-variant": "#566166",
+                        "on-tertiary-fixed": "#383751",
+                        "surface": "#f7f9fb",
+                        "tertiary-fixed": "#d9d7f8",
+                        "tertiary": "#5d5c78",
+                        "primary-fixed": "#d6e3ff",
+                        "surface-dim": "#cfdce3",
+                        "outline-variant": "#a9b4b9",
+                        "background": "#f7f9fb",
+                        "secondary-dim": "#465468",
+                        "error": "#9f403d",
+                        "error-container": "#fe8983",
+                        "surface-container-lowest": "#ffffff",
+                        "on-background": "#2a3439",
+                        "primary-dim": "#0052a0",
+                        "on-error": "#fff7f6",
+                        "on-primary-fixed": "#003f7d",
+                        "secondary-container": "#d5e3fc",
+                        "surface-container-low": "#f0f4f7",
+                        "tertiary-fixed-dim": "#cbc9e9",
+                        "on-secondary-fixed": "#324053",
+                        "on-secondary-fixed-variant": "#4e5c71",
+                        "on-primary": "#f6f7ff",
+                        "primary-fixed-dim": "#bfd5ff",
+                        "on-tertiary": "#fbf7ff",
+                        "primary-container": "#d6e3ff",
+                        "secondary": "#526074",
+                        "outline": "#717c82",
+                        "error-dim": "#4e0309",
+                        "surface-container-highest": "#d9e4ea",
+                        "on-tertiary-container": "#4a4a65",
+                        "secondary-fixed-dim": "#c7d5ed",
+                        "surface-container": "#e8eff3",
+                        "surface-container-high": "#e1e9ee",
+                        "surface-tint": "#005db5",
+                        "on-primary-fixed-variant": "#005bb0",
+                        "on-tertiary-fixed-variant": "#54546f",
+                        "on-secondary": "#f8f8ff",
+                        "primary": "#005db5",
+                        "surface-bright": "#f7f9fb",
+                        "tertiary-dim": "#51516c"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
   </head>
-  <body>
-    <div id="root"></div>
+  <body class="bg-surface text-on-surface min-h-screen flex overflow-hidden dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300">
+    <!-- Visual Embellishment: Background Ambient Glow -->
+    <div class="fixed top-[-10%] right-[-10%] w-[40vw] h-[40vw] rounded-full bg-primary/5 blur-[120px] pointer-events-none -z-10"></div>
+    <div class="fixed bottom-[-10%] left-[20%] w-[30vw] h-[30vw] rounded-full bg-tertiary/5 blur-[100px] pointer-events-none -z-10"></div>
+    
+    <div id="root" class="flex w-full min-h-screen h-full relative"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

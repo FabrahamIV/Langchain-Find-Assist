@@ -1,62 +1,94 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
 import './App.css'
 import Sidebar from './components/Sidebar.jsx'
 import ChatHeader from './components/ChatHeader.jsx'
 import MessageList from './components/MessageList.jsx'
 import ChatInput from './components/ChatInput.jsx'
 
-// Small helper to keep the "shape" of a conversation in one place.
-// App owns the data, but other components just receive what they need as props.
-function createEmptyConversation(id) {
-  return {
-    id,
-    title: 'New Chat',
-    messages: [],
-    createdAt: new Date().toISOString(),
-  }
-}
+const API_BASE = 'http://localhost:8000/api'
 
-// App is now a "page‑level" component: it owns state and behavior,
-// and delegates rendering details to smaller, focused components.
 function App() {
-  // List of all chats in the left sidebar
-  const [conversations, setConversations] = useState(() => {
-    const firstId = crypto.randomUUID()
-    return [createEmptyConversation(firstId)]
-  })
-
-  // Which conversation is currently selected
-  const [activeId, setActiveId] = useState(() => conversations[0]?.id ?? null)
-
-  // Text input + attached file for the message being composed
+  const [conversations, setConversations] = useState([])
+  const [activeId, setActiveId] = useState(null)
   const [input, setInput] = useState('')
   const [attachedFile, setAttachedFile] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
-
-  // Voice input state + browser SpeechRecognition instance
   const [isRecording, setIsRecording] = useState(false)
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const recognitionRef = useRef(null)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
+  const [userId, setUserId] = useState(null)
 
-  // Used to auto‑scroll the messages list when a new message arrives
+  const recognitionRef = useRef(null)
   const messagesEndRef = useRef(null)
 
-  // Compute the active conversation from the list + active id
+  // The active conversation object
   const activeConversation = useMemo(
-    () => conversations.find((c) => c.id === activeId) ?? conversations[0],
+    () => conversations.find((c) => c.id === activeId) ?? conversations[0] ?? null,
     [activeId, conversations],
   )
 
-  // Feature‑detection for browser voice support so we can disable the mic button
+  // Feature‑detection for browser voice support
   const supportsVoice = typeof window !== 'undefined' &&
     ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)
 
-  // One‑time setup of the SpeechRecognition instance (if the browser supports it).
+  // ──────────────── Load conversations from DB on mount ────────────────
+  const fetchConversations = useCallback(async () => {
+    try {
+      const res = await fetch(`${API_BASE}/conversations`)
+      if (!res.ok) return
+      const data = await res.json()
+      const mapped = data.map((c) => ({
+        id: c.conversation_id,
+        title: c.title || 'New Chat',
+        messages: [], // messages loaded on select
+        createdAt: c.created_at,
+        messageCount: c.message_count,
+      }))
+      setConversations(mapped)
+      // If we have conversations but no active one, select the first
+      if (mapped.length > 0 && !activeId) {
+        setActiveId(mapped[0].id)
+      }
+    } catch (err) {
+      console.error('Failed to fetch conversations:', err)
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    fetchConversations()
+  }, [fetchConversations])
+
+  // ──────────────── Load messages when switching conversations ────────────────
+  const loadConversationMessages = useCallback(async (convId) => {
+    try {
+      const res = await fetch(`${API_BASE}/conversations/${convId}`)
+      if (!res.ok) return
+      const data = await res.json()
+      const messages = data.messages.map((m) => ({
+        id: m.message_id,
+        role: m.role,
+        content: m.content,
+        fileName: m.file_name || null,
+        createdAt: m.created_at,
+      }))
+      setConversations((prev) =>
+        prev.map((c) => (c.id === convId ? { ...c, messages, title: data.title } : c)),
+      )
+    } catch (err) {
+      console.error('Failed to load messages:', err)
+    }
+  }, [])
+
+  // Load messages when active conversation changes
+  useEffect(() => {
+    if (activeId) {
+      loadConversationMessages(activeId)
+    }
+  }, [activeId, loadConversationMessages])
+
+  // ──────────────── Speech Recognition setup ────────────────
   useEffect(() => {
     if (!supportsVoice || recognitionRef.current) return
-
-    const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
     if (!SpeechRecognition) return
 
     const recognition = new SpeechRecognition()
@@ -71,40 +103,39 @@ function App() {
       }
       setInput(transcript)
     }
-
-    recognition.onend = () => {
-      setIsRecording(false)
-    }
-
+    recognition.onend = () => setIsRecording(false)
     recognitionRef.current = recognition
   }, [supportsVoice])
 
-  // When messages change, scroll the messages container to the bottom.
+  // Auto‑scroll messages
   useEffect(() => {
     if (!messagesEndRef.current) return
     messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
-  }, [activeConversation?.messages.length])
+  }, [activeConversation?.messages?.length])
 
-  // Create a brand‑new empty chat and make it active.
-  const handleNewChat = () => {
-    const id = crypto.randomUUID()
-    const next = createEmptyConversation(id)
-    setConversations((prev) => [next, ...prev])
-    setActiveId(id)
+  // ──────────────── Handlers ────────────────
+
+  const handleNewChat = async () => {
+    // Optimistic: add a local placeholder immediately
+    const tempId = crypto.randomUUID()
+    const optimistic = {
+      id: tempId,
+      title: 'New Chat',
+      messages: [],
+      createdAt: new Date().toISOString(),
+    }
+    setConversations((prev) => [optimistic, ...prev])
+    setActiveId(tempId)
     setInput('')
     setAttachedFile(null)
   }
 
-  // Helper to update a single conversation by id in an immutable way.
   const updateConversation = (id, updater) => {
     setConversations((prev) =>
       prev.map((c) => (c.id === id ? updater(c) : c)),
     )
   }
 
-  // Handle the form submit from ChatInput.
-  // For now this just generates a mock AI reply;
-  // you can later replace this with a real API call.
   const handleSubmit = async (event) => {
     event.preventDefault()
     const trimmed = input.trim()
@@ -119,42 +150,59 @@ function App() {
       createdAt: new Date().toISOString(),
     }
 
+    // Build form data for backend
     const formData = new FormData()
+    const backendPrompt = trimmed || (attachedFile ? 'Please summarize the attached document.' : '')
+    formData.append('message', backendPrompt)
 
-    formData.append("id", userMessage.id)
-    formData.append("role", userMessage.role)
-    
-    // For the backend, ask for a summary if the user didn't type anything.
-    const backendPrompt = trimmed || (attachedFile ? "Please summarize the attached document." : '')
-    formData.append("message", backendPrompt)
-    
     if (attachedFile) {
-      formData.append("file", attachedFile)
+      formData.append('file', attachedFile)
     }
-    formData.append("created_at", userMessage.createdAt)
 
+    // Send IDs if we have them (for existing conversations)
+    if (userId) formData.append('user_id', userId)
+
+    // Check if activeConversation is a real DB conversation or an optimistic one
+    const isNewConversation = !activeConversation.messageCount && activeConversation.messages.length === 0
+    if (!isNewConversation) {
+      formData.append('conversation_id', activeConversation.id)
+    }
+
+    // Optimistic UI: add user message immediately
     updateConversation(activeConversation.id, (c) => {
-      const nextMessage = [...c.messages, userMessage]
-      // const firstUser = nextMessage.find((m) => m.role === 'user')
-      // const title = c.title || firstUser?.content?.slice(0, 40) || 'New Chat'
+      const nextMessages = [...c.messages, userMessage]
       const title = c.messages.length === 0
         ? userMessage.content.slice(0, 40)
         : c.title
-      return {
-        ...c,
-        messages: nextMessage,
-        title,
-      }
+      return { ...c, messages: nextMessages, title }
     })
+
+    setInput('')
+    setAttachedFile(null)
 
     try {
       setIsLoading(true)
-      const response = await fetch("http://localhost:8000/api/chat", {
-        method: "POST",
+      const response = await fetch(`${API_BASE}/chat`, {
+        method: 'POST',
         body: formData,
       })
 
       const data = await response.json()
+
+      // Store user_id for future requests
+      if (data.user_id) setUserId(data.user_id)
+
+      // If this was a new conversation, update the local ID to match the DB ID
+      if (isNewConversation && data.conversation_id && data.conversation_id !== activeConversation.id) {
+        setConversations((prev) =>
+          prev.map((c) =>
+            c.id === activeConversation.id
+              ? { ...c, id: data.conversation_id }
+              : c
+          ),
+        )
+        setActiveId(data.conversation_id)
+      }
 
       const aiReply = {
         id: crypto.randomUUID(),
@@ -163,25 +211,44 @@ function App() {
         createdAt: new Date().toISOString(),
       }
 
-      updateConversation(activeConversation.id, (c) => {
-        const nextMessage = [...c.messages, aiReply]
-        return {
-          ...c,
-          messages: nextMessage,
-        }
-      })
+      // Use the potentially updated conversation_id
+      const targetId = (isNewConversation && data.conversation_id) ? data.conversation_id : activeConversation.id
+      updateConversation(targetId, (c) => ({
+        ...c,
+        messages: [...c.messages, aiReply],
+      }))
     } catch (error) {
-      console.error("Chat error:", error)
+      console.error('Chat error:', error)
+      updateConversation(activeConversation.id, (c) => ({
+        ...c,
+        messages: [
+          ...c.messages,
+          {
+            id: crypto.randomUUID(),
+            role: 'assistant',
+            content: 'Sorry, something went wrong. Please try again.',
+            createdAt: new Date().toISOString(),
+          },
+        ],
+      }))
     } finally {
       setIsLoading(false)
     }
-      
-    setInput('')
-    setAttachedFile(null)
   }
 
-  // Keep App in charge of the file object, and let ChatInput tell us
-  // when the user picked or cleared a file.
+  const handleDeleteConversation = async (convId) => {
+    try {
+      await fetch(`${API_BASE}/conversations/${convId}`, { method: 'DELETE' })
+      setConversations((prev) => prev.filter((c) => c.id !== convId))
+      if (activeId === convId) {
+        const remaining = conversations.filter((c) => c.id !== convId)
+        setActiveId(remaining.length > 0 ? remaining[0].id : null)
+      }
+    } catch (err) {
+      console.error('Failed to delete conversation:', err)
+    }
+  }
+
   const handleFileChange = (event) => {
     const file = event.target.files?.[0]
     if (!file) {
@@ -191,11 +258,9 @@ function App() {
     setAttachedFile(file)
   }
 
-  // Start/stop the SpeechRecognition instance when the mic button is clicked.
   const toggleRecording = () => {
     if (!supportsVoice || !recognitionRef.current) return
     const recognition = recognitionRef.current
-
     if (isRecording) {
       recognition.stop()
       setIsRecording(false)
@@ -206,12 +271,10 @@ function App() {
     }
   }
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen((prev) => !prev)
-  }
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev)
 
   return (
-    <div className={`app ${!isSidebarOpen ? 'sidebar-open' : 'sidebar-collapsed'}`}>
+    <div className="flex h-screen w-full bg-surface dark:bg-slate-950 font-['Inter'] relative overflow-hidden">
       <Sidebar
         isOpen={isSidebarOpen}
         onToggle={toggleSidebar}
@@ -223,9 +286,10 @@ function App() {
           setInput('')
           setAttachedFile(null)
         }}
+        onDeleteConversation={handleDeleteConversation}
       />
 
-      <main className="chat-main">
+      <main className={`flex-1 min-h-0 flex flex-col h-full relative transition-all duration-300 ${isSidebarOpen ? 'ml-80' : 'ml-20'}`}>
         <ChatHeader />
 
         <MessageList
@@ -245,10 +309,6 @@ function App() {
           isRecording={isRecording}
           onToggleRecording={toggleRecording}
         />
-
-        <div className="chat-footer-hint">
-          <span>2026</span>
-        </div>
       </main>
     </div>
   )

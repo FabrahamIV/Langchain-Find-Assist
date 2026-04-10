@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sanctuary | Cognitive Intelligence Suite</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface": "#2a3439",
+                        "on-secondary-container": "#455367",
+                        "tertiary-container": "#d9d7f8",
+                        "inverse-surface": "#0b0f10",
+                        "on-error-container": "#752121",
+                        "secondary-fixed": "#d5e3fc",
+                        "inverse-on-surface": "#9a9d9f",
+                        "surface-variant": "#d9e4ea",
+                        "inverse-primary": "#5f9efb",
+                        "on-primary-container": "#00519e",
+                        "on-surface-variant": "#566166",
+                        "on-tertiary-fixed": "#383751",
+                        "surface": "#f7f9fb",
+                        "tertiary-fixed": "#d9d7f8",
+                        "tertiary": "#5d5c78",
+                        "primary-fixed": "#d6e3ff",
+                        "surface-dim": "#cfdce3",
+                        "outline-variant": "#a9b4b9",
+                        "background": "#f7f9fb",
+                        "secondary-dim": "#465468",
+                        "error": "#9f403d",
+                        "error-container": "#fe8983",
+                        "surface-container-lowest": "#ffffff",
+                        "on-background": "#2a3439",
+                        "primary-dim": "#0052a0",
+                        "on-error": "#fff7f6",
+                        "on-primary-fixed": "#003f7d",
+                        "secondary-container": "#d5e3fc",
+                        "surface-container-low": "#f0f4f7",
+                        "tertiary-fixed-dim": "#cbc9e9",
+                        "on-secondary-fixed": "#324053",
+                        "on-secondary-fixed-variant": "#4e5c71",
+                        "on-primary": "#f6f7ff",
+                        "primary-fixed-dim": "#bfd5ff",
+                        "on-tertiary": "#fbf7ff",
+                        "primary-container": "#d6e3ff",
+                        "secondary": "#526074",
+                        "outline": "#717c82",
+                        "error-dim": "#4e0309",
+                        "surface-container-highest": "#d9e4ea",
+                        "on-tertiary-container": "#4a4a65",
+                        "secondary-fixed-dim": "#c7d5ed",
+                        "surface-container": "#e8eff3",
+                        "surface-container-high": "#e1e9ee",
+                        "surface-tint": "#005db5",
+                        "on-primary-fixed-variant": "#005bb0",
+                        "on-tertiary-fixed-variant": "#54546f",
+                        "on-secondary": "#f8f8ff",
+                        "primary": "#005db5",
+                        "surface-bright": "#f7f9fb",
+                        "tertiary-dim": "#51516c"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex overflow-hidden dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300">
+<!-- Sidebar: SideNavBar component from JSON -->
+<aside class="fixed left-0 top-0 h-full flex flex-col p-4 space-y-2 bg-slate-100 dark:bg-slate-900 h-screen w-80 rounded-none tonal-shift no-border font-['Inter'] text-sm tracking-wide font-medium z-50 transition-all duration-300">
+<!-- Sidebar Header / Logo Cluster -->
+<div class="flex items-center justify-between mb-8 px-2">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">dataset</span>
+</div>
+<div>
+<h1 class="font-['Manrope'] font-bold text-slate-900 dark:text-slate-50 text-base leading-none">Cognitive Sanctuary</h1>
+<p class="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-widest mt-1">Intelligence Suite</p>
+</div>
+</div>
+<button class="p-2 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-slate-500">menu_open</span>
+</button>
+</div>
+<!-- Main Navigation Items from JSON -->
+<nav class="flex-1 space-y-1">
+<!-- Active: New Chat -->
+<button class="w-full flex items-center gap-3 bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 rounded-xl px-4 py-3 shadow-sm scale-95 active:scale-100 duration-150 transition-all group">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+<span class="font-semibold">New Chat</span>
+</button>
+<button class="w-full flex items-center gap-3 text-slate-600 dark:text-slate-400 px-4 py-3 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-all group">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span>History</span>
+</button>
+<button class="w-full flex items-center gap-3 text-slate-600 dark:text-slate-400 px-4 py-3 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-all group">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+<span>Search</span>
+</button>
+</nav>
+<!-- CTA Section -->
+<div class="px-2 py-4">
+<div class="bg-gradient-to-br from-primary to-primary-dim p-4 rounded-2xl text-white shadow-xl shadow-primary/10">
+<p class="text-xs opacity-80 mb-2">Access advanced models</p>
+<button class="w-full py-2 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-lg text-sm font-bold transition-colors">
+                    Upgrade to Pro
+                </button>
+</div>
+</div>
+<!-- Footer Tabs from JSON -->
+<div class="pt-4 border-t border-slate-200 dark:border-slate-800 space-y-1">
+<button class="w-full flex items-center gap-3 text-slate-600 dark:text-slate-400 px-4 py-3 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-all group" onclick="document.documentElement.classList.toggle('dark')">
+<span class="material-symbols-outlined dark:hidden">dark_mode</span>
+<span class="material-symbols-outlined hidden dark:block">light_mode</span>
+<span class="dark:hidden">Dark Mode</span>
+<span class="hidden dark:block">Light Mode</span>
+</button>
+<button class="w-full flex items-center gap-3 text-slate-600 dark:text-slate-400 px-4 py-3 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-all group">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</button>
+<button class="w-full flex items-center gap-3 text-slate-600 dark:text-slate-400 px-4 py-3 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-all group">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span>Help</span>
+</button>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="flex-1 ml-80 flex flex-col relative transition-all duration-300">
+<!-- TopAppBar component from JSON -->
+<header class="flex justify-between items-center w-full px-6 py-4 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl font-['Manrope'] font-semibold tracking-tight docked full-width top-0 sticky no-border shadow-[0px_12px_32px_rgba(42,52,57,0.06)] z-40">
+<div class="flex items-center gap-4">
+<span class="text-xl font-extrabold text-slate-900 dark:text-slate-50">Sanctuary</span>
+<span class="px-2 py-0.5 bg-tertiary-container text-on-tertiary-container text-[10px] rounded-full uppercase tracking-tighter">V4.2 Catalyst</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors" onclick="document.documentElement.classList.toggle('dark')">
+<span class="material-symbols-outlined dark:hidden">dark_mode</span>
+<span class="material-symbols-outlined hidden dark:block">light_mode</span>
+</button>
+<button class="p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="tune">tune</span>
+</button>
+<div class="h-8 w-[1px] bg-slate-200 dark:bg-slate-800 mx-2"></div>
+<button class="flex items-center gap-2 pl-2 pr-1 py-1 rounded-full border border-outline-variant/20 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<div class="w-8 h-8 rounded-full overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="professional portrait of a creative director in a minimalist studio setting with soft natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLGOF7K-iiq2msTW7K79Hm4lMb5uyrvr1W8tFGrdptlu3r73hMGYNTl1S0EUU8k4CaXgIn5iZYmu8LgJfsPB7hDQJo_Et5mdpY0pTlhPkbEe7ivkNj1i5BWZKaPcnN4v7RMl8r7F5beAN1epVw225xC4620q6ODP2vlEBDmmy1ldHNquXvYNXaid_VyJIpHbsak7jrH4utbbjgLwY0kJzTxcru70GGU4-zLmle7VIZlLohS7qnv1m3egmsN29uoZHOoNYVVYME4tvV"/>
+</div>
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-400" data-icon="account_circle">expand_more</span>
+</button>
+</div>
+</header>
+<!-- Chat Content Area -->
+<section class="flex-1 flex flex-col items-center justify-center px-6 max-w-5xl mx-auto w-full pb-32">
+<!-- Greeting (Editorial Layout) -->
+<div class="text-center mb-12 space-y-4">
+<div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-container/30 text-primary dark:bg-primary/20 mb-4">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">bubbles</span>
+<span class="text-xs font-bold tracking-widest uppercase">System Ready</span>
+</div>
+<h2 class="text-5xl font-extrabold text-on-surface dark:text-slate-50 tracking-tight leading-[1.1]">
+                    Hi, what can I help today?
+                </h2>
+<p class="text-secondary dark:text-slate-400 body-lg max-w-lg mx-auto opacity-70">
+                    Your digital sanctuary for synthesis, creation, and complex problem solving.
+                </p>
+</div>
+<!-- Bento Prompt Starters (Asymmetric Layout) -->
+<div class="grid grid-cols-12 gap-4 w-full">
+<div class="col-span-7 bg-surface-container-low dark:bg-slate-900/50 p-6 rounded-3xl hover:bg-surface-container-high dark:hover:bg-slate-800 transition-all cursor-pointer group">
+<span class="material-symbols-outlined text-primary mb-3" data-icon="auto_awesome">auto_awesome</span>
+<h3 class="font-bold text-lg mb-2 dark:text-slate-100">Synthesize research</h3>
+<p class="text-sm text-secondary dark:text-slate-400 leading-relaxed">Create a comprehensive summary of the latest trends in sustainable architecture for 2024.</p>
+</div>
+<div class="col-span-5 bg-tertiary-container/20 dark:bg-slate-800/50 p-6 rounded-3xl hover:bg-tertiary-container/40 dark:hover:bg-slate-700 transition-all cursor-pointer group">
+<span class="material-symbols-outlined text-tertiary mb-3" data-icon="code_blocks">code_blocks</span>
+<h3 class="font-bold text-lg mb-2 dark:text-slate-100">Review Code</h3>
+<p class="text-sm text-secondary dark:text-slate-400 leading-relaxed">Optimize my React component for performance.</p>
+</div>
+<div class="col-span-4 bg-surface-container-low dark:bg-slate-900/50 p-6 rounded-3xl hover:bg-surface-container-high dark:hover:bg-slate-800 transition-all cursor-pointer group">
+<span class="material-symbols-outlined text-primary mb-3" data-icon="edit_note">edit_note</span>
+<h3 class="font-bold text-lg mb-2 dark:text-slate-100">Draft Email</h3>
+<p class="text-sm text-secondary dark:text-slate-400 leading-relaxed">A polite follow-up for a project proposal.</p>
+</div>
+<div class="col-span-8 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/10 dark:border-slate-800 p-6 rounded-3xl shadow-sm hover:shadow-md transition-all cursor-pointer group relative overflow-hidden">
+<div class="relative z-10">
+<span class="material-symbols-outlined text-primary mb-3" data-icon="image">image</span>
+<h3 class="font-bold text-lg mb-2 dark:text-slate-100">Generate Visual Concept</h3>
+<p class="text-sm text-secondary dark:text-slate-400 leading-relaxed">Describe a futuristic minimalist workspace in a mountain cabin at dusk.</p>
+</div>
+<div class="absolute right-0 bottom-0 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-9xl translate-x-8 translate-y-8" data-icon="brush">brush</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Command Center (Chat Input) - Widened -->
+<footer class="fixed bottom-0 right-0 p-6 flex justify-center bg-gradient-to-t from-surface via-surface/95 to-transparent dark:from-slate-950 dark:via-slate-950/95 z-30 left-0 ml-80">
+<div class="w-full max-w-4xl">
+<div class="bg-surface-container-highest dark:bg-slate-900 rounded-[2rem] p-2 focus-within:bg-surface-container-lowest dark:focus-within:bg-slate-800/80 focus-within:shadow-[0px_12px_32px_rgba(42,52,57,0.06)] border border-transparent focus-within:border-outline-variant/20 transition-all duration-300 relative group">
+<!-- TextArea Input -->
+<textarea class="w-full bg-transparent border-none focus:ring-0 resize-none px-6 pt-4 pb-14 text-on-surface dark:text-slate-100 title-sm placeholder:text-slate-500" placeholder="Message Sanctuary..." rows="3"></textarea>
+<!-- Input Controls -->
+<div class="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+<div class="flex items-center gap-1">
+<button class="p-2 text-slate-500 hover:text-primary dark:hover:text-blue-400 hover:bg-primary-container/30 dark:hover:bg-slate-800 rounded-xl transition-all" title="Add File">
+<span class="material-symbols-outlined" data-icon="attach_file">attach_file</span>
+</button>
+<button class="p-2 text-slate-500 hover:text-primary dark:hover:text-blue-400 hover:bg-primary-container/30 dark:hover:bg-slate-800 rounded-xl transition-all" title="Image">
+<span class="material-symbols-outlined" data-icon="image">image</span>
+</button>
+<button class="p-2 text-slate-500 hover:text-primary dark:hover:text-blue-400 hover:bg-primary-container/30 dark:hover:bg-slate-800 rounded-xl transition-all" title="Web Search">
+<span class="material-symbols-outlined" data-icon="public">public</span>
+</button>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-slate-500 hover:text-primary dark:hover:text-blue-400 hover:bg-primary-container/30 dark:hover:bg-slate-800 rounded-xl transition-all" title="Voice">
+<span class="material-symbols-outlined" data-icon="mic">mic</span>
+</button>
+<button class="flex items-center justify-center w-10 h-10 rounded-2xl bg-gradient-to-br from-primary to-primary-dim text-white shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-xl" data-icon="arrow_upward">arrow_upward</span>
+</button>
+</div>
+</div>
+<!-- Token/Mode Indicator -->
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 flex items-center gap-4 text-[10px] font-bold tracking-widest text-slate-400 uppercase opacity-0 group-focus-within:opacity-100 transition-opacity">
+<span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> GPT-4o Model</span>
+<span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-primary"></span> Memory Active</span>
+</div>
+</div>
+<p class="text-[10px] text-center text-slate-400 mt-3 font-medium">Sanctuary may display inaccurate info, including about people, so double-check its responses.</p>
+</div>
+</footer>
+</main>
+<!-- Visual Embellishment: Background Ambient Glow -->
+<div class="fixed top-[-10%] right-[-10%] w-[40vw] h-[40vw] rounded-full bg-primary/5 blur-[120px] pointer-events-none -z-10"></div>
+<div class="fixed bottom-[-10%] left-[20%] w-[30vw] h-[30vw] rounded-full bg-tertiary/5 blur-[100px] pointer-events-none -z-10"></div>
+</body></html>

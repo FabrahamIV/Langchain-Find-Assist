@@ -1,6 +1,5 @@
-from app.agents.agents_state import ChatState
+from app.schemas.chat_schemas import ChatState
 from app.agents.agents_debug_log import _agent_debug_log
-from langchain_google_genai import ChatGoogleGenerativeAI
 from dotenv import load_dotenv
 from langchain_community.embeddings import HuggingFaceEmbeddings
 

@@ -1,11 +1,11 @@
 import os
 from typing import Dict, Any, Literal
-from app.agents.agents_state import ChatState
-
+from app.schemas.chat_schemas import ChatState
 from app.services.services_file import load_docs, create_chunks
 from app.services.services_rag import embeddings
-from app.services.services_pinecone import pinecone_vector_store, retrieve_docs
-from app.agents.agents_chat_graph import generate_reply
+from app.services.services_pinecone import pinecone_vector_store
+from app.services.services_retrieve_docs import retrieve_docs
+from app.services.services_generate_reply import generate_reply
 
 
 def process_file_node(state: ChatState) -> dict:

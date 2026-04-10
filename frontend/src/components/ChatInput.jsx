@@ -1,7 +1,3 @@
-// ChatInput: handles the message composer UI (text, file, voice, submit button).
-// App stays in control of the actual values and logic; this component only
-// raises events via the callbacks passed in props.
-
 function ChatInput({
   input,
   onInputChange,
@@ -14,83 +10,92 @@ function ChatInput({
   onToggleRecording,
 }) {
   return (
-    <form className="chat-input-container" onSubmit={onSubmit}>
-      {attachedFile ? (
-        <div className="attached-file-pill">
-          <span className="attached-file-icon">📎</span>
-          <span className="attached-file-name">{attachedFile.name}</span>
-          <button
-            type="button"
-            className="attached-file-remove"
-            onClick={onRemoveFile}
-          >
-            ✕
-          </button>
-        </div>
-      ) : null}
+    <footer className="w-full p-6 pb-8 flex justify-center z-30 shrink-0">
+      <div className="w-full max-w-4xl">
+        {attachedFile && (
+          <div className="mb-2 inline-flex items-center gap-2 bg-surface-container-highest dark:bg-slate-800 text-on-surface dark:text-slate-200 px-3 py-1.5 rounded-xl text-sm shadow-sm">
+            <span className="material-symbols-outlined text-[18px]">attach_file</span>
+            <span className="max-w-[200px] truncate">{attachedFile.name}</span>
+            <button
+              type="button"
+              className="text-slate-400 hover:text-red-500 transition-colors ml-1"
+              onClick={onRemoveFile}
+            >
+              <span className="material-symbols-outlined text-[18px]">close</span>
+            </button>
+          </div>
+        )}
 
-      <div className="chat-input-row gemini-style">
-        <label className="icon-button" htmlFor="file-upload" title="Upload file">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-          <input
-            id="file-upload"
-            type="file"
-            className="file-input-hidden"
-            onChange={onFileChange}      n
-          />
-        </label>
-
-        <div className="chat-input-wrapper">
-          <input
-            className="chat-input gemini-input"
-            placeholder="Ask Find-Assist"
+        <form 
+          className="bg-surface-container-highest dark:bg-slate-900 rounded-[2rem] p-2 focus-within:bg-surface-container-lowest dark:focus-within:bg-slate-800/80 focus-within:shadow-[0px_12px_32px_rgba(42,52,57,0.06)] border border-transparent focus-within:border-outline-variant/20 transition-all duration-300 relative group"
+          onSubmit={onSubmit}
+        >
+          <textarea
+            className="w-full bg-transparent border-none focus:ring-0 resize-none px-6 pt-4 pb-14 text-on-surface dark:text-slate-100 placeholder:text-slate-500 font-['Inter'] outline-none"
+            placeholder="Message Find-Assist..."
+            rows={3}
             value={input}
-            onChange={(event) => onInputChange(event.target.value)}
+            onChange={(e) => onInputChange(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter') {
+              if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 onSubmit(e);
               }
             }}
           />
-        </div>
 
-        {supportsVoice && (
-          <button
-            type="button"
-            className={`icon-button voice-btn ${isRecording ? 'recording' : ''}`}
-            onClick={onToggleRecording}
-            disabled={!supportsVoice}
-            title={
-              supportsVoice
-                ? isRecording
-                  ? 'Stop recording'
-                  : 'Use microphone'
-                : 'Microphone not supported'
-            }
-          >
-            {isRecording ? (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2" ry="2"></rect></svg>
-            ) : (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
-            )}
-          </button>
-        )}
+          <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between">
+            <div className="flex items-center gap-1">
+              <label 
+                className="p-2 text-slate-500 hover:text-primary dark:hover:text-blue-400 hover:bg-primary-container/30 dark:hover:bg-slate-800 rounded-xl transition-all cursor-pointer" 
+                title="Add File"
+              >
+                <span className="material-symbols-outlined">attach_file</span>
+                <input
+                  type="file"
+                  className="hidden"
+                  onChange={onFileChange}
+                />
+              </label>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              {supportsVoice && (
+                <button
+                  type="button"
+                  className={`p-2 rounded-xl transition-all ${
+                    isRecording
+                      ? 'bg-red-100 text-red-500 dark:bg-red-500/20 dark:text-red-400 animate-pulse'
+                      : 'text-slate-500 hover:text-primary dark:hover:text-blue-400 hover:bg-primary-container/30 dark:hover:bg-slate-800'
+                  }`}
+                  onClick={onToggleRecording}
+                  title={isRecording ? 'Stop recording' : 'Use microphone'}
+                >
+                  <span className="material-symbols-outlined">mic</span>
+                </button>
+              )}
+              
+              <button
+                type="submit"
+                disabled={!input.trim() && !attachedFile}
+                className="flex items-center justify-center w-10 h-10 rounded-2xl bg-gradient-to-br from-primary to-primary-dim text-white shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              >
+                <span className="material-symbols-outlined text-xl">arrow_upward</span>
+              </button>
+            </div>
+          </div>
 
-        {input.trim() || attachedFile ? (
-          <button
-            type="submit"
-            className="send-button-gemini"
-            title="Send message"
-          >
-             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
-          </button>
-        ) : null}
+          <div className="absolute -top-10 left-1/2 -translate-x-1/2 flex items-center gap-4 text-[10px] font-bold tracking-widest text-slate-400 uppercase opacity-0 group-focus-within:opacity-100 transition-opacity">
+            <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-green-500"></span> Find-Assist Model</span>
+            <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-primary"></span> Memory Active</span>
+          </div>
+        </form>
+        
+        {/* <p className="text-[10px] text-center text-slate-400 mt-3 font-medium">Find-Assist may display inaccurate info, including about people, so double-check its responses.</p> */}
       </div>
-    </form>
-  )
+    </footer>
+  );
 }
 
-export default ChatInput
-
+export default ChatInput;
 
